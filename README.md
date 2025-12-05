@@ -8,4 +8,4 @@ First, get Cookiecutter:
 
 Now run it for this repo:
 
-    $ cookiecutter https://github.com/sallory/fastapi-template
+    $ cookiecutter https://github.com/spazzlite/fastapi-template
