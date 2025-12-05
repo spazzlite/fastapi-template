@@ -4,7 +4,7 @@ from sqlalchemy import Numeric, cast, delete, desc, func, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.models.base import BaseModel as OrmBaseModel
-from src.schemas.admin.base import BaseListOutModel, BaseOutModel
+from src.schemas.base import BaseListOutModel, BaseOutModel
 
 
 OrmModel = TypeVar("OrmModel", bound=OrmBaseModel)

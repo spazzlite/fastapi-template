@@ -3,7 +3,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
-from src.schemas.admin.base import BaseListOutModel
+from .base import BaseListOutModel
 
 
 class UserBase(BaseModel):

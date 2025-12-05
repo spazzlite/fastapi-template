@@ -16,7 +16,7 @@ class UserRepo(SQLAlchemyRepo[User, schemas.User, schemas.UserListOut, schemas.U
     OUT_LIST_MODEL = schemas.UserListOut
     OUT_LIST_ITEM_MODEL = schemas.User
     # TODO change to use base method
-    async def create_user(self, user_in: schemas.UserCreate, hashed_password: str) -> schemas.User:
+    async def create_user(self, user_in: schemas.UserCreateIn, hashed_password: str) -> schemas.User:
         stmt = insert(User).returning(User).values(
             username=user_in.username,
             first_name=user_in.first_name,
@@ -57,13 +57,3 @@ class UserRepo(SQLAlchemyRepo[User, schemas.User, schemas.UserListOut, schemas.U
         result = await self.session.scalars(stmt)
 
         return [schemas.User.model_validate(user) for user in result]
-
-    async def get_user_with_items(self, user_id: UUID) -> schemas.UserWithItems:
-        stmt = select(User).where(User.id == user_id).options(joinedload(User.items))
-
-        result = await self.session.scalar(stmt)
-
-        if result is None:
-            raise NotFound("User not found")
-
-        return schemas.UserWithItems.model_validate(result)

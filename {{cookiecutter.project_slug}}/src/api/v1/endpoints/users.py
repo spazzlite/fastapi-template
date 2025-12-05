@@ -1,8 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 
 from src import deps, schemas
-from src.exceptions import repo as repo_exc
-from src.repo.uow import UnitOfWork
 from src.services.user_service import UserService
 
 router = APIRouter()
@@ -10,7 +8,7 @@ router = APIRouter()
 
 @router.post("/")
 async def create_user(
-    user_in: schemas.UserCreate,
+    user_in: schemas.UserCreateIn,
     _: schemas.User = Depends(deps.authenticated_user),
     service: UserService = Depends(deps.get_user_service())
 ) -> schemas.User:
