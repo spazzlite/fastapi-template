@@ -9,9 +9,9 @@ router = APIRouter()
 
 @router.post("/access-token")
 async def get_access_token(
-        user_in: schemas.Login,
-        authenticator: Authenticator = Depends(),
-        user_repo: UserRepo = Depends(deps.get_repo(UserRepo)),
+    user_in: schemas.Login,
+    authenticator: Authenticator = Depends(),
+    user_repo: UserRepo = Depends(deps.get_repo(UserRepo)),
 ) -> schemas.Token:
     """
     Retrieve access-token

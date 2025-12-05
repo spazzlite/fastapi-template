@@ -1,7 +1,9 @@
-from typing import Optional
+from typing import Optional, Sequence
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
+
+from src.schemas.admin.base import BaseListOutModel
 
 
 class UserBase(BaseModel):
@@ -10,7 +12,7 @@ class UserBase(BaseModel):
     middle_name: Optional[str] = None
 
 
-class UserCreate(UserBase):
+class UserCreateIn(UserBase):
     username: str
     password: str
 
@@ -26,5 +28,15 @@ class UserInDBBase(UserBase):
     is_active: bool
 
 
+class UserCreateOut(UserInDBBase):
+    first_name: str | None
+    last_name: str | None
+    middle_name: str | None
+
+
 class User(UserInDBBase):
     pass
+
+
+class UserListOut(BaseListOutModel):
+    items: Sequence[User] = []

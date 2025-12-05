@@ -10,9 +10,13 @@ from .base import SQLAlchemyRepo
 from .exceptions import NotFound
 
 
-class UserRepo(SQLAlchemyRepo):
-
-    async def create(self, user_in: schemas.UserCreate, hashed_password: str) -> schemas.User:
+class UserRepo(SQLAlchemyRepo[User, schemas.User, schemas.UserListOut, schemas.User]):
+    ORM_MODEL = User
+    OUT_MODEL = schemas.User
+    OUT_LIST_MODEL = schemas.UserListOut
+    OUT_LIST_ITEM_MODEL = schemas.User
+    # TODO change to use base method
+    async def create_user(self, user_in: schemas.UserCreate, hashed_password: str) -> schemas.User:
         stmt = insert(User).returning(User).values(
             username=user_in.username,
             first_name=user_in.first_name,
@@ -21,16 +25,16 @@ class UserRepo(SQLAlchemyRepo):
             hashed_password=hashed_password,
         )
 
-        user = await self._session.scalar(stmt)
+        user = await self.session.scalar(stmt)
 
-        await self._session.commit()
+        await self.session.commit()
 
         return schemas.User.model_validate(user)
 
     async def get(self, user_id: UUID) -> schemas.User:
         stmt = select(User).where(User.id == user_id)
 
-        result = await self._session.scalar(stmt)
+        result = await self.session.scalar(stmt)
 
         if result is None:
             raise NotFound("User not found")
@@ -40,7 +44,7 @@ class UserRepo(SQLAlchemyRepo):
     async def get_by_username(self, username: str, raise_exc: bool = True) -> User:
         stmt = select(User).where(User.username == username)
 
-        result = await self._session.scalar(stmt)
+        result = await self.session.scalar(stmt)
 
         if result is None and raise_exc:
             raise NotFound("User not found")
@@ -50,14 +54,14 @@ class UserRepo(SQLAlchemyRepo):
     async def get_users(self) -> list[schemas.User]:
         stmt = select(User)
 
-        result = await self._session.scalars(stmt)
+        result = await self.session.scalars(stmt)
 
         return [schemas.User.model_validate(user) for user in result]
 
     async def get_user_with_items(self, user_id: UUID) -> schemas.UserWithItems:
         stmt = select(User).where(User.id == user_id).options(joinedload(User.items))
 
-        result = await self._session.scalar(stmt)
+        result = await self.session.scalar(stmt)
 
         if result is None:
             raise NotFound("User not found")
